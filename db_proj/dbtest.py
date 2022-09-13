@@ -3,6 +3,10 @@ import pymysql
 db = pymysql.connect(host="124.220.153.34", user="root",
                      password="123456", database="Book",
                      port=3306, charset='utf8')
-cursor = db.cursor()
+cursor = db.cursor(pymysql.cursors.DictCursor)
 cursor.execute("insert into somebook(id,name,author) values (null ,'szy2','szyszy2')")
 db.commit()
+sql = "SELECT * FROM somebook"
+cursor.execute(sql)
+items = cursor.fetchall()
+print(items)
