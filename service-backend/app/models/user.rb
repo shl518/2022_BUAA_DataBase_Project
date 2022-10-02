@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  validates :user_name, uniqueness: { case_sensitive: true }, allow_nil: true
+  validates :name, uniqueness: { case_sensitive: true }, allow_nil: true
   validates :password, presence: true, length: { minimum: 6 }
   # password检测，之后进行测试
   # validate :password_format_check
