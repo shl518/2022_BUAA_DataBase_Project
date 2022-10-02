@@ -304,6 +304,7 @@ export default {
         }
       })
     },
+    
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.timestamp = new Date(this.temp.timestamp)
@@ -313,6 +314,7 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {

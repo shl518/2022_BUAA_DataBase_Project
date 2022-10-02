@@ -1,6 +1,7 @@
 <template>
 
   <div class="login-container">
+    
     <el-row :gutter="20">
       <el-col :span="8" :offset="14">
         <el-form
@@ -54,14 +55,25 @@
               </span>
             </el-form-item>
           </el-tooltip>
-
-          <el-button
+          <el-row>
+            <el-button
             :loading="loading"
             type="primary"
-            style="width:100%;margin-bottom:30px;"
+            style="width:45%;margin-bottom:30px;"
             @click.native.prevent="handleLogin"
           >登录
           </el-button>
+          
+          <el-button
+            :loading="loading"
+            type="success"
+            style="width:45%;margin-bottom:30px;"
+            @click="register"
+          >注册
+          </el-button>
+          </el-row>
+          
+
 
           <div style="position:relative">
             <!--
@@ -90,6 +102,12 @@
         </el-dialog>
       </el-col>
     </el-row>
+    <edit-modal
+      ref="editModal"
+      :visible.sync="dialogFormVisible"
+      @close="dialogFormVisible = false"
+      @updateItem="onUpdateSubmit"
+    />
   </div>
 
 </template>
@@ -97,10 +115,11 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
+import editModal from './components/registerPanel.vue'
 
 export default {
   name: 'Login',
-  components: { SocialSign },
+  components: { SocialSign ,editModal},
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
@@ -130,7 +149,8 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      dialogFormVisible: false,
     }
   },
   watch: {
@@ -159,6 +179,24 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    
+    register() {
+      this.dialogFormVisible = true;
+    },
+
+    onUpdateSubmit(data) { //注册
+      console.log(data.user_name,data.password,data.password_confirmation)
+      this.dialogFormVisible = false;
+      this.$store.dispatch('user/register', data)
+            .then(() => {
+              // 登录成功进行路由的跳转
+              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            })
+            .catch(() => {
+              console.log("注册失败")
+            })
+    },
+
     checkCapslock(e) {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
@@ -180,6 +218,8 @@ export default {
         if (valid) {
           // 按钮会有一个loading效果
           this.loading = true
+          console.log(this.loginForm.username)
+          console.log(this.loginForm.password)
           // 派发一个action:user/login,带着用户名与密码的载荷
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
@@ -204,7 +244,7 @@ export default {
         }
         return acc
       }, {})
-    }
+    },
     // afterQRScan() {
     //   if (e.key === 'x-admin-oauth-code') {
     //     const code = getQueryObject(e.newValue)
@@ -232,7 +272,7 @@ export default {
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg: #283443;
-$light_gray: #fff;
+$light_gray: rgb(5, 5, 5);
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
