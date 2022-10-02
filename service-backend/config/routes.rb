@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     post :register, to: 'user#register', as: :user_register
     post :login, to: 'user#login', as: :user_login
     post :logout, to: 'user#logout', as: :user_logout
-    get :get_information, to: 'user#information', as: :get_information
+    get :get_information, to: 'user#get_information', as: :get_information
   end
 
   scope :dish do
