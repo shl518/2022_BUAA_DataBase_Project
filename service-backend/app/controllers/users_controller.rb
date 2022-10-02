@@ -50,7 +50,7 @@ class UserController < ApplicationController
       return
     end
 
-    unless password != user[:password]
+    unless password == user[:password]
       render status: 403, json: response_json(
         false,
         code: UserLoginErrorCode::WRONG_PASSWORD_OR_USERNAME,
@@ -63,7 +63,10 @@ class UserController < ApplicationController
     user.save
     render status: 200, json: response_json(
       true,
-      message: "Login success!"
+      message: "Login success!",
+      data: {
+        token: "admin-token"
+      }
     )
   end
 

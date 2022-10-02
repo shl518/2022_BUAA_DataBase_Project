@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     get :get_information, to: 'user#information', as: :get_information
   end
 
-  scope :dishes do
+  scope :dish do
     post :create, to: 'dish#create', as: :dish_create
     get :list, to: 'dish#list', as: :dish_list
     delete :delete, to: 'dish#delete', as: :dish_delete
