@@ -1,77 +1,88 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: %i[ show update destroy ]
+  # POST /users#register
+  def register
+    user = User.new user_name: params[:user_name], password: params[:password]
+    password_confirmation = params[:password_confirmation]
 
-  # GET /users
-  def index
-    @users = User.all
+    unless user.password == password_confirmation
+      render status: 412, json: response_json(
+        false,
+        code: UserRegisterErrorCode::INVALID_INFORMATION,
+        message: "Password is not equal to password_confirmation.",
+      )
+    end
 
-    render json: @users
-  end
-
-  # GET /users/1
-  def show
-    render json: @user
-  end
-
-  # POST /users
-  def create
-    @user = User.new(user_params)
-
-    if @user.save
-      render json: @user, status: :created, location: @user
+    if user.save
+      render status: 200, json: response_json(
+        true,
+        message: "Register success!",
+        data: {
+          user_name: user[:user_name]
+        }
+      )
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render status: 412, json: response_json(
+        false,
+        message: "Invalid information!"
+      )
     end
   end
 
-  # PATCH/PUT /users/1
-  def update
-    if @user.update(user_params)
-      render json: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
-  end
-
-  # DELETE /users/1
-  def destroy
-    @user.destroy
-  end
-
-    def login # 用户登录
+  # POST /user#login
+  def login # 用户登录
     user_name = params[:user_name]
 
     password = params[:password]
 
     if_remember = params[:remember].to_s.downcase == "ture"
 
-    user = User.find_by(username: _user)
-    
+    user = User.find_by(user_name: user_name)
+
     unless user
       render status: 403, json: response_json(
         false,
-        code:
+        code: UserLoginErrorCode::USER_NOT_EXIST,
         message: "Username or password wrong!"
       )
       return
     end
 
+    unless password != user.password
+      render status: 403, json: response_json(
+        false,
+        code: UserLoginErrorCode::WRONG_PASSWORD_OR_USERNAME,
+        message: "Username or password wrong!"
+      )
+      return
+    end
+
+    @user = user
     user.save
     render status: 200, json: response_json(
       true,
       message: "Login success!"
     )
-    
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
+  # POST /user#logout
+  def logout
+    @user = nil
+    render status: 200, json: response_json(
+      true ,
+      message: "Logged out!"
+    )
+  end
 
-    # Only allow a list of trusted parameters through.
-    def user_params
-      params.require(:user).permit(:name, :password)
-    end
+  # GET /user#
+  def get_information
+    render status: 200, json: response_json(
+      true,
+      message: "Success",
+      data: {
+        user_name: @user[:user_name],
+        user_role: "Admin"
+      }
+    )
+  end
+
 end
