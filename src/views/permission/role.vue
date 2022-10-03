@@ -93,6 +93,7 @@ export default {
   },
   created() {
     // Mock: get all routes and roles list from server
+
     this.getRoutes()
     this.getRoles()
   },

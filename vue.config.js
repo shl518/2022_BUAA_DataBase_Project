@@ -37,15 +37,15 @@ module.exports = {
       errors: true
     },
     // 使用mock数据
-    before: require('./mock/mock-server.js')
+    // before: require('./mock/mock-server.js')
     // 使用真实接口
 
-    // proxy :{
-    //   "/dev-api": {
-    //     target: "http://localhost:3000", // 接口地址
-    //     pathRewrite: {"^/dev-api" : ""} // 路径重写
-    //   }
-    // }
+    proxy :{
+       "/dev-api": {
+         target: "http://localhost:3000", // 接口地址
+         pathRewrite: {"^/dev-api" : ""} // 路径重写
+       }
+     }
 
 
   },

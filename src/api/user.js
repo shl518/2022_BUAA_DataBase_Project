@@ -10,7 +10,7 @@ export function login(data) {
 
 export function getInfo(token) {
   return request({
-    url: '/vue-element-admin/user/info',
+    url: '/user/get_information',
     method: 'get',
     params: { token }
   })
@@ -20,7 +20,7 @@ export function register(data) {
   return request({
     url: '/user/register',
     method: 'post',
-    data
+    data,
   })
 }
 

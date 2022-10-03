@@ -33,6 +33,7 @@ const actions = {
   //user register
   register({commit},userInfo) {
       const {user_name,password,password_confirmation} = userInfo
+      console.log(userInfo)
       return new Promise((resolve,reject) => {
           register({user_name:user_name.trim(),password:password,
             password_confirmation:password_confirmation}).then(response => {

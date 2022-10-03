@@ -104,6 +104,7 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  /*
   {
     path: '/permission',
     component: Layout,
@@ -145,7 +146,7 @@ export const asyncRoutes = [
       }
     ]
   },
-
+*/
   {
     path: '/icon',
     component: Layout,

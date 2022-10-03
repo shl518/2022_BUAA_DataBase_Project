@@ -1,7 +1,7 @@
 <template>
 
   <div class="login-container">
-    
+
     <el-row :gutter="20">
       <el-col :span="8" :offset="14">
         <el-form
@@ -63,7 +63,7 @@
             @click.native.prevent="handleLogin"
           >登录
           </el-button>
-          
+
           <el-button
             :loading="loading"
             type="success"
@@ -72,7 +72,7 @@
           >注册
           </el-button>
           </el-row>
-          
+
 
 
           <div style="position:relative">
@@ -157,6 +157,7 @@ export default {
     $route: {
       handler: function(route) {
         const query = route.query
+        console.log(query)
         if (query) {
           this.redirect = query.redirect
           this.otherQuery = this.getOtherQuery(query)
@@ -179,7 +180,7 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
-    
+
     register() {
       this.dialogFormVisible = true;
     },
@@ -190,7 +191,9 @@ export default {
       this.$store.dispatch('user/register', data)
             .then(() => {
               // 登录成功进行路由的跳转
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              this.loginForm.username = data.user_name
+              this.loginForm.password = data.password
+              this.handleLogin()
             })
             .catch(() => {
               console.log("注册失败")
@@ -224,6 +227,7 @@ export default {
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
               // 登录成功进行路由的跳转
+              // console.log("we would login success")
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               // loading效果结束
               this.loading = false
