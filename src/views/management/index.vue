@@ -9,7 +9,7 @@
         @keyup.enter.native="handleFilter"
       />
       <el-select v-model="listQuery.star" placeholder="Star" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in starOptions" :key="item" :label="item" :value="item" />
+        <el-option v-for="item in starOptions" :key="item" :label="item" :value="item"/>
       </el-select>
       <el-select v-model="listQuery.type" placeholder="Canteen" clearable class="filter-item" style="width: 130px">
         <el-option
@@ -20,7 +20,7 @@
         />
       </el-select>
       <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
+        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key"/>
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
@@ -34,6 +34,7 @@
       >
         Add
       </el-button>
+      <!--
       <el-button
         v-waves
         :loading="downloadLoading"
@@ -44,88 +45,92 @@
       >
         Export
       </el-button>
+      -->
+      <!--
       <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
         reviewer
       </el-checkbox>
+      -->
     </div>
-
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-    >
-      <el-table-column
-        label="ID"
-        prop="id"
-        sortable="custom"
-        align="center"
-        width="90"
-        :class-name="getSortClass('id')"
+    <div class="table-container">
+      <el-table
+        :key="tableKey"
+        v-loading="listLoading"
+        :data="list"
+        border
+        fit
+        highlight-current-row
+        style="width: 100%;"
+        @sort-change="sortChange"
       >
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="FoodName" width="200px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.dishname }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Canteen" width="200px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.canteen }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Price" width="170px" align="center">
-        <template slot-scope="{row}">
-          <span>￥{{ row.price }}.00</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
-        <template slot-scope="{row}">
-          <span style="color:red;">{{ row.reviewer }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Star" width="180px" align="center">
-        <template slot-scope="{row}">
-          <svg-icon v-for="n in + row.star" :key="n" icon-class="star" class="meta-item__icon" />
-        </template>
-      </el-table-column>
-      <el-table-column label="Comments" align="center" width="200px">
-        <template slot-scope="{row}">
-          <span v-if="row.pageviews" class="link-type">{{ row.pageviews }}</span>
-          <span v-else>0</span>
-        </template>
-      </el-table-column>
+        <el-table-column
+          label="ID"
+          prop="id"
+          sortable="custom"
+          align="center"
+          width="90px"
+          :class-name="getSortClass('id')"
+        >
+          <template slot-scope="{row}">
+            <span>{{ row.id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="FoodName" width="200px" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.dishname }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Canteen" width="200px" align="center">
+          <template slot-scope="{row}">
+            <span>{{ row.canteen }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Price" width="170px" align="center">
+          <template slot-scope="{row}">
+            <span>￥{{ row.price }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
+          <template slot-scope="{row}">
+            <span style="color:red;">{{ row.reviewer }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Star" width="180px" align="center">
+          <template slot-scope="{row}">
+            <svg-icon v-for="n in + row.star" :key="n" icon-class="star" class="meta-item__icon"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="Comments" align="center" width="200px">
+          <template slot-scope="{row}">
+            <span v-if="row.comment" class="link-type"
+                  @click="handleUpdateComment">{{ row.comment }}</span>
+            <span v-else>0</span>
+          </template>
+        </el-table-column>
 
-      <el-table-column label="Actions" align="center" width="385px" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
-          </el-button>
-          <el-button
-            v-if="row.status!='published'"
-            size="mini"
-            type="success"
-            @click="handleModifyStatus(row,'published')"
-          >
-            Publish
-          </el-button>
-          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
-            Draft
-          </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-            Delete
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
+        <el-table-column label="Actions" align="center" width="385px" class-name="small-padding fixed-width">
+          <template slot-scope="{row,$index}">
+            <el-button type="primary" size="mini" @click="handleUpdate(row)">
+              Edit
+            </el-button>
+            <el-button
+              v-if="row.status!='published'"
+              size="mini"
+              type="success"
+              @click="handleModifyStatus(row,'published')"
+            >
+              Publish
+            </el-button>
+            <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
+              Draft
+            </el-button>
+            <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
+              Delete
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     <pagination
       v-show="total>0"
       :total="total"
@@ -144,7 +149,7 @@
         style="width: 300px; margin-left:50px;"
       >
         <el-form-item label="Dishname" prop="dishname">
-          <el-input v-model="temp.dishname" />
+          <el-input v-model="temp.dishname"/>
         </el-form-item>
         <el-form-item label="Canteen" prop="canteen">
           <el-select v-model="temp.canteen" class="filter-item" placeholder="Please select">
@@ -162,16 +167,10 @@
         </el-form-item>
         -->
         <el-form-item label="Price" prop="price">
-          <el-input v-model="temp.price" />
+          <font style="font-size: large;padding-right: 5px">￥</font>
+          <el-input placeholder="00.00" style="width: 150px" v-model="temp.price"></el-input>
         </el-form-item>
 
-        <!--
-        <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item"/>
-          </el-select>
-        </el-form-item>
-        -->
         <el-form-item label="Star">
           <el-rate
             v-model="temp.star"
@@ -182,6 +181,7 @@
                       '#FF3D00']"
             :max="5"
             style="margin-top:8px;"
+            show-text="true"
           />
         </el-form-item>
       </el-form>
@@ -196,10 +196,6 @@
     </el-dialog>
 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
       </span>
@@ -208,39 +204,37 @@
 </template>
 
 <script>
-import { fetchList, fetchDish, createDish, updateDish } from '@/api/dish'
+import {fetchList, fetchDish, createDish, updateDish, deleteDish} from '@/api/dish'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
+import {parseTime} from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
 const canteenOptions = [
-  { key: '合一', display_name: '合一' },
-  { key: '学二', display_name: '学二' },
-  { key: '新北', display_name: '新北' }
+  {key: '合一', display_name: '合一'},
+  {key: '学二', display_name: '学二'},
+  {key: '新北', display_name: '新北'}
 ]
 
 // arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
 
 const canteenTypeKeyValue = canteenOptions.reduce((acc, cur) => {
   acc[cur.key] = cur.display_name
   return acc
 }, {})
 
+const MoneyTest = /((^[1-9]\d*)|^0)(\.\d{0,2}){0,1}$/;
+const validateMoney = (rule, value, callback) => {
+  rule = MoneyTest
+  if (rule.test(value)) {
+    callback();
+  } else {
+    callback("price must be a number with two decimal places")
+  }
+}
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
-  directives: { waves },
+  components: {Pagination},
+  directives: {waves},
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -249,9 +243,6 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
-    },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type]
     },
     canteenFilter(canteen) {
       return canteenTypeKeyValue[canteen]
@@ -272,17 +263,17 @@ export default {
         sort: '+id'
       },
       starOptions: [1, 2, 3, 4, 5],
-      calendarTypeOptions,
       canteenOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
+      sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
       showReviewer: false,
       temp: {
         id: undefined,
         dishname: '',
-        price: 0,
+        price: Number(0.00),
         star: 1,
         canteen: '',
-        timestamp: new Date()
+        timestamp: new Date(),
+        comment: 0
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -291,11 +282,13 @@ export default {
         create: 'Create'
       },
       dialogPvVisible: false,
+
       rules: {
-        canteen: [{ required: true, message: 'canteen is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        price: [{ type: 'integer', required: true, message: 'price is required', trigger: 'blur' }],
-        dishname: [{ required: true, message: 'dishname is required', trigger: 'blur' }]
+        canteen: [{required: true, message: 'canteen is required', trigger: 'change'}],
+        timestamp: [{type: 'date', required: true, message: 'timestamp is required', trigger: 'change'}],
+        price: [{validator:validateMoney, message: 'price must be a number with two decimal places',trigger: 'blur'},
+          {required: true, message: 'price is required', trigger: 'blur'}],
+        dishname: [{required: true, message: 'dishname is required', trigger: 'blur'}]
       },
       downloadLoading: false
     }
@@ -328,7 +321,7 @@ export default {
       row.status = status
     },
     sortChange(data) {
-      const { prop, order } = data
+      const {prop, order} = data
       if (prop === 'id') {
         this.sortByID(order)
       }
@@ -363,7 +356,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.canteen = 'vue-element-admin'
+          this.temp.canteen = '学二'
           createDish(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -413,7 +406,10 @@ export default {
         duration: 2000
       })
       this.list.splice(index, 1)
-      //deleteDish()
+      deleteDish()
+    },
+    handleUpdateComment(row) {
+      this.commentDialogStatus = true;
     },
     handleDownload() {
       this.downloadLoading = true
@@ -438,7 +434,7 @@ export default {
         }
       }))
     },
-    getSortClass: function(key) {
+    getSortClass: function (key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
     }

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/vue-element-admin/dish/list',
+    url: '/dish/list',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function fetchList(query) {
 
 export function fetchDish(id) {
   return request({
-    url: '/vue-element-admin/dish/detail',
+    url: '/dish/detail',
     method: 'get',
     params: { id }
   })
@@ -18,7 +18,7 @@ export function fetchDish(id) {
 
 export function createDish(data) {
   return request({
-    url: '/vue-element-admin/dish/create',
+    url: '/dish/create',
     method: 'post',
     data
   })
@@ -26,8 +26,16 @@ export function createDish(data) {
 
 export function updateDish(data) {
   return request({
-    url: '/vue-element-admin/dish/update',
+    url: '/dish/update',
     method: 'post',
+    data
+  })
+}
+
+export function deleteDish(data) {
+  return request({
+    url: '/dish/delete',
+    method: 'del',
     data
   })
 }
