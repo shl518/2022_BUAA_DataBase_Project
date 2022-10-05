@@ -57,8 +57,11 @@ class DishController < ApplicationController
   # POST /dish#update
   def update
     old_dish = Dish.find(params[:dish_id])
+    old_dish[:name] = params[:dish_name]
+    old_dish[:price] = params[:dish_price]
+    old_dish[:star] = params[:dish_star]
 
-    if old_dish.update(dish_params)
+    if old_dish.save
       render status: 200, json: response_json(
         true,
         message: "update dish success!"
