@@ -90,7 +90,7 @@ class UserController < ApplicationController
     # )
 
     # 以下为使用sql语句进行查询
-    user = execute_statement("SELECT * FROM users WHERE name=#{user_name}").as_json
+    user = execute_statement("SELECT * FROM users WHERE name='#{user_name}'").as_json
 
     if user.empty?
       render status: 403, json: response_json(
