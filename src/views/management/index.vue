@@ -19,7 +19,7 @@
           :value="item.key"
         />
       </el-select>
-      <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
+      <el-select v-model="listQuery.sort_by_id" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key"/>
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -260,11 +260,11 @@ export default {
         dish_star: undefined,
         dish_name: undefined,
         canteen_name: undefined,
-        sort: '+dish_id'
+        sort_by_id: '+id'
       },
       starOptions: [1, 2, 3, 4, 5],
       canteenOptions,
-      sortOptions: [{label: 'ID Ascending', key: '+dish_id'}, {label: 'ID Descending', key: '-dish_id'}],
+      sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
       showReviewer: false,
       temp: {
         dish_id: undefined,
@@ -328,9 +328,9 @@ export default {
     },
     sortByID(order) {
       if (order === 'ascending') {
-        this.listQuery.sort = '+dish_id'
+        this.listQuery.sort_by_id = '+id'
       } else {
-        this.listQuery.sort = '-dish_id'
+        this.listQuery.sort_by_id = '-id'
       }
       this.handleFilter()
     },
@@ -440,7 +440,7 @@ export default {
       }))
     },
     getSortClass: function (key) {
-      const sort = this.listQuery.sort
+      const sort = this.listQuery.sort_by_id
       return sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
