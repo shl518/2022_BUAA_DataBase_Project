@@ -8,7 +8,7 @@
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
-      <el-select v-model="listQuery.star" placeholder="Star" clearable style="width: 90px" class="filter-item">
+      <el-select v-model="listQuery.dish_star" placeholder="Star" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in starOptions" :key="item" :label="item" :value="item"/>
       </el-select>
       <el-select v-model="listQuery.type" placeholder="Canteen" clearable class="filter-item" style="width: 130px">
@@ -65,29 +65,29 @@
       >
         <el-table-column
           label="ID"
-          prop="id"
+          prop="dish_id"
           sortable="custom"
           align="center"
           width="90px"
-          :class-name="getSortClass('id')"
+          :class-name="getSortClass('dish_id')"
         >
           <template slot-scope="{row}">
-            <span>{{ row.id }}</span>
+            <span>{{ row.dish_id }}</span>
           </template>
         </el-table-column>
         <el-table-column label="FoodName" width="200px" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.dishname }}</span>
+            <span>{{ row.dish_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Canteen" width="200px" align="center">
           <template slot-scope="{row}">
-            <span>{{ row.canteen }}</span>
+            <span>{{ row.canteen_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Price" width="170px" align="center">
           <template slot-scope="{row}">
-            <span>￥{{ row.price }}</span>
+            <span>￥{{ row.dish_price }}</span>
           </template>
         </el-table-column>
         <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
@@ -97,7 +97,7 @@
         </el-table-column>
         <el-table-column label="Star" width="180px" align="center">
           <template slot-scope="{row}">
-            <svg-icon v-for="n in + row.star" :key="n" icon-class="star" class="meta-item__icon"/>
+            <svg-icon v-for="n in + row.dish_star" :key="n" icon-class="star" class="meta-item__icon"/>
           </template>
         </el-table-column>
         <el-table-column label="Comments" align="center" width="200px">
@@ -132,8 +132,8 @@
       </el-table>
     </div>
     <pagination
-      v-show="total>0"
-      :total="total"
+      v-show="list_length>0"
+      :list_length="list_length"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
       @pagination="getList"
@@ -148,11 +148,11 @@
         label-width="120px"
         style="width: 300px; margin-left:50px;"
       >
-        <el-form-item label="Dishname" prop="dishname">
-          <el-input v-model="temp.dishname"/>
+        <el-form-item label="DishName" prop="dish_name">
+          <el-input v-model="temp.dish_name"/>
         </el-form-item>
-        <el-form-item label="Canteen" prop="canteen">
-          <el-select v-model="temp.canteen" class="filter-item" placeholder="Please select">
+        <el-form-item label="Canteen" prop="canteen_name">
+          <el-select v-model="temp.canteen_name" class="filter-item" placeholder="Please select">
             <el-option
               v-for="item in canteenOptions"
               :key="item.key"
@@ -166,14 +166,14 @@
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date"/>
         </el-form-item>
         -->
-        <el-form-item label="Price" prop="price">
+        <el-form-item label="Price" prop="dish_price">
           <font style="font-size: large;padding-right: 5px">￥</font>
-          <el-input placeholder="00.00" style="width: 150px" v-model="temp.price"></el-input>
+          <el-input placeholder="00.00" style="width: 150px" v-model="temp.dish_price"></el-input>
         </el-form-item>
 
         <el-form-item label="Star">
           <el-rate
-            v-model="temp.star"
+            v-model="temp.dish_star"
             :colors="['#99A9BF',
                       '#F7BA2A',
                       '#FF9900',
@@ -244,34 +244,34 @@ export default {
       }
       return statusMap[status]
     },
-    canteenFilter(canteen) {
-      return canteenTypeKeyValue[canteen]
+    canteenFilter(canteen_name) {
+      return canteenTypeKeyValue[canteen_name]
     }
   },
   data() {
     return {
       tableKey: 0,
       list: null,
-      total: 0,
+      list_length: 0,
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 20,
-        star: undefined,
-        dishname: undefined,
-        canteen: undefined,
-        sort: '+id'
+        dish_star: undefined,
+        dish_name: undefined,
+        canteen_name: undefined,
+        sort: '+dish_id'
       },
       starOptions: [1, 2, 3, 4, 5],
       canteenOptions,
-      sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
+      sortOptions: [{label: 'ID Ascending', key: '+dish_id'}, {label: 'ID Descending', key: '-dish_id'}],
       showReviewer: false,
       temp: {
-        id: undefined,
-        dishname: '',
-        price: Number(0.00),
-        star: 1,
-        canteen: '',
+        dish_id: undefined,
+        dish_name: '',
+        dish_price: Number(0.00),
+        dish_star: 1,
+        canteen_name: '',
         timestamp: new Date(),
         comment: 0
       },
@@ -284,11 +284,11 @@ export default {
       dialogPvVisible: false,
 
       rules: {
-        canteen: [{required: true, message: 'canteen is required', trigger: 'change'}],
+        canteen_name: [{required: true, message: 'canteen is required', trigger: 'change'}],
         timestamp: [{type: 'date', required: true, message: 'timestamp is required', trigger: 'change'}],
-        price: [{validator:validateMoney, message: 'price must be a number with two decimal places',trigger: 'blur'},
+        dish_price: [{validator:validateMoney, message: 'price must be a number with two decimal places',trigger: 'blur'},
           {required: true, message: 'price is required', trigger: 'blur'}],
-        dishname: [{required: true, message: 'dishname is required', trigger: 'blur'}]
+        dish_name: [{required: true, message: 'dish_name is required', trigger: 'blur'}]
       },
       downloadLoading: false
     }
@@ -300,8 +300,8 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
+        this.list = response.data.list_items
+        this.list_length = response.data.list_length
 
         // Just to simulate the time of the request
         setTimeout(() => {
@@ -322,26 +322,26 @@ export default {
     },
     sortChange(data) {
       const {prop, order} = data
-      if (prop === 'id') {
+      if (prop === 'dish_id') {
         this.sortByID(order)
       }
     },
     sortByID(order) {
       if (order === 'ascending') {
-        this.listQuery.sort = '+id'
+        this.listQuery.sort = '+dish_id'
       } else {
-        this.listQuery.sort = '-id'
+        this.listQuery.sort = '-dish_id'
       }
       this.handleFilter()
     },
     resetTemp() {
       this.temp = {
-        id: undefined,
-        dishname: '',
-        price: 0,
-        star: 1,
+        dish_id: undefined,
+        dish_name: '',
+        dish_price: 0,
+        dish_star: 1,
         timestamp: new Date(),
-        canteen: ''
+        canteen_name: ''
       }
     },
     handleCreate() {
@@ -355,8 +355,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.canteen = '学二'
+          // this.temp.dish_id = parseInt(Math.random() * 100) + 1024 // mock a id
           createDish(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -385,7 +384,7 @@ export default {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateDish(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
+            const index = this.list.findIndex(v => v.dish_id === this.temp.dish_id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -399,14 +398,20 @@ export default {
       })
     },
     handleDelete(row, index) {
+      this.temp = Object.assign({}, row)
+      let Did={
+        dish_id: this.temp.dish_id
+      }
+      deleteDish(Did).then(()=> {
+        this.list.splice(index, 1)
+        }
+      )
       this.$notify({
         title: 'Success',
         message: 'Delete Successfully',
         type: 'success',
         duration: 2000
       })
-      this.list.splice(index, 1)
-      deleteDish()
     },
     handleUpdateComment(row) {
       this.commentDialogStatus = true;
@@ -414,8 +419,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'dishname', 'canteen', 'star', 'status']
-        const filterVal = ['timestamp', 'dishname', 'canteen', 'star', 'status']
+        const tHeader = ['timestamp', 'dish_name', 'canteen_name', 'dish_star', 'status']
+        const filterVal = ['timestamp', 'dish_name', 'canteen_name', 'dish_star', 'status']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,

@@ -42,7 +42,8 @@ module.exports = {
 
     proxy :{
        "/dev-api": {
-         target: "http://localhost:3000", // 接口地址
+         //target: "http://localhost:3000/", // 接口地址
+         target: "http://124.220.153.34:9097/",
          pathRewrite: {"^/dev-api" : ""} // 路径重写
        }
      }

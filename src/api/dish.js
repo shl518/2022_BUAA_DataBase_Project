@@ -35,7 +35,7 @@ export function updateDish(data) {
 export function deleteDish(data) {
   return request({
     url: '/dish/delete',
-    method: 'del',
+    method: 'delete',
     data
   })
 }
