@@ -9,13 +9,14 @@ class DishController < ApplicationController
     dish[:star] = params[:dish_star]
 
     # 检查canteen
-    canteen = Canteen.find_by(name: params[:canteen_name])
-    if canteen
-      dish.canteen = canteen
-    else
-      Canteen.create(name: params[:canteen_name])
-      dish.canteen = Dish.find_by(name: params[:canteen_name])
-    end
+    # canteen = Canteen.find_by(name: params[:canteen_name])
+    # if canteen
+    #   dish.canteen = canteen
+    # else
+    #   Canteen.create(name: params[:canteen_name])
+    #   dish.canteen = Dish.find_by(name: params[:canteen_name])
+    # end
+    dish[:canteen_name] = params[:canteen_name]
 
     if dish.save
       render status: 200, json: response_json(
@@ -28,11 +29,16 @@ class DishController < ApplicationController
   # GET /dish/list
   def list
     dishes = Dish.all
+    dishes_to_frontend = Array.new
+    dishes.each { |dish| dishes_to_frontend << (dish.to_json_for_frontend) }
+    hash_to_frontend = Hash.new
+    hash_to_frontend.store("list_length", dishes.length)
+    hash_to_frontend.store("list_items", dishes_to_frontend)
 
     render status: 200, json: response_json(
       true,
       message: "List dish success!",
-      data: dishes
+      data: hash_to_frontend
     )
   end
 
