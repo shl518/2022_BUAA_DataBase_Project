@@ -26,4 +26,7 @@ module ApplicationControllerHelper
     }
   end
 
+  def execute_statement(sql)
+    ActiveRecord::Base.connection.execute(sql)
+  end
 end

@@ -1,4 +1,4 @@
-class DishesController < ApplicationController
+class DishController < ApplicationController
   before_action :set_dish, only: %i[ show update destroy ]
 
   # POST /dish#create
@@ -13,7 +13,7 @@ class DishesController < ApplicationController
     if canteen
       dish.canteen = canteen
     else
-      Canteen.create(params[:canteen_name])
+      Canteen.create(name: params[:canteen_name])
       dish.canteen = Dish.find_by(name: params[:canteen_name])
     end
 

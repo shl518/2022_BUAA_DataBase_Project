@@ -13,8 +13,27 @@ class UserController < ApplicationController
     #     message: "Password is not equal to password_confirmation.",
     #   )
     # end
+    # if user.save
+    #   render status: 200, json: response_json(
+    #     true,
+    #     message: "Register success!",
+    #     data: {
+    #       user_name: user[:name]
+    #     }
+    #   )
+    # else
+    #   puts User.errors
+    #   render status: 412, json: response_json(
+    #     false,
+    #     message: "Invalid information!"
+    #   )
+    # end
 
-    if user.save
+    # 以下为使用sql语句进行插入操作
+    begin
+      execute_statement("INSERT INTO users(id, name, password, created_at, updated_at)
+      VALUES (#{id}, #{user[:name]}, #{user[:password]}, #{Time.now.to_s(:db)}, #{Time.now.to_s(:db)})")
+
       render status: 200, json: response_json(
         true,
         message: "Register success!",
@@ -22,8 +41,7 @@ class UserController < ApplicationController
           user_name: user[:name]
         }
       )
-    else
-      puts User.errors
+    rescue
       render status: 412, json: response_json(
         false,
         message: "Invalid information!"
@@ -37,11 +55,44 @@ class UserController < ApplicationController
 
     password = params[:password]
 
+    # 以下为利用rails框架进行查询等操作
+
     # if_remember = params[:remember].to_s.downcase == "ture"
+    #
+    # user = User.find_by(name: user_name)
+    #
+    # unless user
+    #   render status: 403, json: response_json(
+    #     false,
+    #     code: UserLoginErrorCode::USER_NOT_EXIST,
+    #     message: "Username or password wrong!"
+    #   )
+    #   return
+    # end
+    #
+    # unless password == user[:password]
+    #   render status: 403, json: response_json(
+    #     false,
+    #     code: UserLoginErrorCode::WRONG_PASSWORD_OR_USERNAME,
+    #     message: "Username or password wrong!"
+    #   )
+    #   return
+    # end
+    #
+    # @user = user
+    # user.save
+    # render status: 200, json: response_json(
+    #   true,
+    #   message: "Login success!",
+    #   data: {
+    #     token: "admin-token"
+    #   }
+    # )
 
-    user = User.find_by(name: user_name)
+    # 以下为使用sql语句进行查询
+    user = execute_statement("SELECT * FROM users WHERE name=#{user_name}").as_json
 
-    unless user
+    if user.empty?
       render status: 403, json: response_json(
         false,
         code: UserLoginErrorCode::USER_NOT_EXIST,
@@ -50,7 +101,7 @@ class UserController < ApplicationController
       return
     end
 
-    unless password == user[:password]
+    unless password == user[0][2]
       render status: 403, json: response_json(
         false,
         code: UserLoginErrorCode::WRONG_PASSWORD_OR_USERNAME,
@@ -60,7 +111,7 @@ class UserController < ApplicationController
     end
 
     @user = user
-    user.save
+
     render status: 200, json: response_json(
       true,
       message: "Login success!",
@@ -68,13 +119,14 @@ class UserController < ApplicationController
         token: "admin-token"
       }
     )
+
   end
 
   # POST /user#logout
   def logout
     @user = nil
     render status: 200, json: response_json(
-      true ,
+      true,
       message: "Logged out!"
     )
   end
