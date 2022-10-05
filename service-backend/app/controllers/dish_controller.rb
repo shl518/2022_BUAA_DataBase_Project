@@ -1,5 +1,5 @@
 class DishController < ApplicationController
-  before_action :set_dish, only: %i[ show update destroy ]
+  # before_action :set_dish, only: %i[ show update destroy ]
 
   # POST /dish#create
   def create
@@ -60,6 +60,7 @@ class DishController < ApplicationController
     old_dish[:name] = params[:dish_name]
     old_dish[:price] = params[:dish_price]
     old_dish[:star] = params[:dish_star]
+    old_dish[:canteen_name] = params[:canteen_name]
 
     if old_dish.save
       render status: 200, json: response_json(
@@ -76,19 +77,19 @@ class DishController < ApplicationController
   end
 
   # DELETE /dishes/1
-  def destroy
-    @dish.destroy
-  end
+  # def destroy
+  #   @dish.destroy
+  # end
 
-  private
+  # private
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_dish
-    @dish = Dish.find(params[:id])
-  end
-
-  # Only allow a list of trusted parameters through.
-  def dish_params
-    params.require(:dish).permit(:name, :price, :star)
-  end
+  # def set_dish
+  #   @dish = Dish.find(params[:id])
+  # end
+  #
+  # # Only allow a list of trusted parameters through.
+  # def dish_params
+  #   params.require(:dish).permit(:name, :price, :star)
+  # end
 end
