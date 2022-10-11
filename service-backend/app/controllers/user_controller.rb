@@ -1,5 +1,5 @@
 class UserController < ApplicationController
-
+  @@id = 50
   # POST /users#register
   def register
     user = User.new
@@ -32,7 +32,7 @@ class UserController < ApplicationController
     # 以下为使用sql语句进行插入操作
     begin
       execute_statement("INSERT INTO users(id, name, password, created_at, updated_at)
-      VALUES (#{@id}, '#{user[:name]}', '#{user[:password]}', '#{DateTime.parse(Time.now.to_s).strftime('%Y-%m-%d %H:%M:%S')}',
+      VALUES (#{@@id}, '#{user[:name]}', '#{user[:password]}', '#{DateTime.parse(Time.now.to_s).strftime('%Y-%m-%d %H:%M:%S')}',
         '#{DateTime.parse(Time.now.to_s).strftime('%Y-%m-%d %H:%M:%S')}');")
 
       render status: 200, json: response_json(
@@ -42,7 +42,7 @@ class UserController < ApplicationController
           user_name: user[:name]
         }
       )
-      @id = @id + 1
+      @@id += 1
     rescue
       render status: 412, json: response_json(
         false,
