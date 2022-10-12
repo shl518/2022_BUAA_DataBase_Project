@@ -8,6 +8,7 @@ class DishController < ApplicationController
     dish[:name] = params[:dish_name]
     dish[:price] = params[:dish_price]
     dish[:star] = params[:dish_star]
+    dish[:canteen_name] = params[:canteen_name]
 
     # 检查canteen
     # canteen = Canteen.find_by(name: params[:canteen_name])
@@ -28,9 +29,9 @@ class DishController < ApplicationController
 
     # 以下为sql语句进行插入操作
     begin
-      execute_statement("INSERT INTO dishes(id, name, price, star, created_at, updated_at)
+      execute_statement("INSERT INTO dishes(id, name, price, star, created_at, updated_at, canteen_name)
       VALUES(#{@@id}, '#{dish[:name]}', #{dish[:price]} , '#{dish[:star]}','#{DateTime.parse(Time.now.to_s).strftime('%Y-%m-%d %H:%M:%S')}',
-       '#{DateTime.parse(Time.now.to_s).strftime('%Y-%m-%d %H:%M:%S')}');")
+       '#{DateTime.parse(Time.now.to_s).strftime('%Y-%m-%d %H:%M:%S')}', '#{dish[:canteen_name]}');")
 
       render status: 200, json: response_json(
         true,
