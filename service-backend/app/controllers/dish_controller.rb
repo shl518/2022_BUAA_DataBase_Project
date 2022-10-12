@@ -76,7 +76,7 @@ class DishController < ApplicationController
     sql += "ORDER BY id DESC" if sort_by_id == '-id'
 
     dishes = execute_statement(sql).as_json
-    dishes_to_frontend = dishes.map { |dish| %w[id dish_name dish_price dish_star created_at
+    dishes_to_frontend = dishes.map { |dish| %w[dish_id dish_name dish_price dish_star created_at
     updated_at canteen_name].zip(dish).to_h }
     hash_to_frontend = Hash.new
     hash_to_frontend.store("list_length", dishes.length)
