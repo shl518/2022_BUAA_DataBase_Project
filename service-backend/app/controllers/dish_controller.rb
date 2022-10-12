@@ -67,9 +67,9 @@ class DishController < ApplicationController
     sql = "SELECT * FROM dishes "
     if dish_name || canteen_name || dish_star
       sql += "WHERE "
-      sql += "dish_name = '#{dish_name}' " if dish_name
-      sql += "canteen_name = '#{canteen_name}' " if canteen_name
-      sql += "dish_star = #{dish_star} " if dish_star
+      sql += "dish_name = '#{dish_name}' " if dish_name && !dish_name.empty?
+      sql += "canteen_name = '#{canteen_name}' " if canteen_name && !canteen_name.empty?
+      sql += "dish_star = #{dish_star} " if dish_star && !dish_star.empty?
     end
 
     sql += "ORDER BY id ASC" if sort_by_id == '+id'
