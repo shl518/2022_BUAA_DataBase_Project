@@ -40,14 +40,13 @@ module.exports = {
     // before: require('./mock/mock-server.js')
     // 使用真实接口
 
-    proxy :{
-       "/dev-api": {
-         //target: "http://localhost:3000/", // 接口地址
-         target: "http://124.220.153.34:9097/",
-         pathRewrite: {"^/dev-api" : ""} // 路径重写
-       }
-     }
-
+    proxy: {
+      '/dev-api': {
+        // target: 'http://localhost:3000/', // 接口地址
+        target: 'http://124.220.153.34:9097/',
+        pathRewrite: { '^/dev-api': '' } // 路径重写
+      }
+    }
 
   },
   configureWebpack: {
@@ -116,7 +115,7 @@ module.exports = {
                 },
                 elementUI: {
                   name: 'chunk-elementUI', // split elementUI into a single package
-                  priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+                  priority: 20, // the weight needs to be larger than libs and app, or it will be packaged into libs or app
                   test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
                 },
                 commons: {

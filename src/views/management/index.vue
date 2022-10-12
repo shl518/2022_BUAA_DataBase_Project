@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input
-        v-model="listQuery.title"
+        v-model="listQuery.dish_name"
         placeholder="DishName"
         style="width: 200px;"
         class="filter-item"
@@ -11,7 +11,7 @@
       <el-select v-model="listQuery.dish_star" placeholder="Star" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in starOptions" :key="item" :label="item" :value="item"/>
       </el-select>
-      <el-select v-model="listQuery.type" placeholder="Canteen" clearable class="filter-item" style="width: 130px">
+      <el-select v-model="listQuery.canteen_name" placeholder="Canteen" clearable class="filter-item" style="width: 130px">
         <el-option
           v-for="item in canteenOptions"
           :key="item.key"
@@ -55,7 +55,7 @@
     <div class="table-container">
       <el-table
         :key="tableKey"
-        v-loading="listLoading"
+        :v-loading="listLoading"
         :data="list"
         border
         fit
@@ -71,60 +71,61 @@
           width="90px"
           :class-name="getSortClass('dish_id')"
         >
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.dish_id }}</span>
           </template>
         </el-table-column>
         <el-table-column label="FoodName" width="200px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.dish_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Canteen" width="200px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>{{ row.canteen_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Price" width="170px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span>￥{{ row.dish_price }}</span>
           </template>
         </el-table-column>
         <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span style="color:red;">{{ row.reviewer }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Star" width="180px" align="center">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <svg-icon v-for="n in + row.dish_star" :key="n" icon-class="star" class="meta-item__icon"/>
           </template>
         </el-table-column>
         <el-table-column label="Comments" align="center" width="200px">
-          <template slot-scope="{row}">
+          <template v-slot="{row}">
             <span v-if="row.comment" class="link-type"
-                  @click="handleUpdateComment">{{ row.comment }}</span>
+                  @click="handleUpdateComment"
+            >{{ row.comment }}</span>
             <span v-else>0</span>
           </template>
         </el-table-column>
 
         <el-table-column label="Actions" align="center" width="385px" class-name="small-padding fixed-width">
-          <template slot-scope="{row,$index}">
+          <template v-slot="{row,$index}">
             <el-button type="primary" size="mini" @click="handleUpdate(row)">
               Edit
             </el-button>
             <el-button
-              v-if="row.status!='published'"
+              v-if="row.status!=='published'"
               size="mini"
               type="success"
               @click="handleModifyStatus(row,'published')"
             >
               Publish
             </el-button>
-            <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
+            <el-button v-if="row.status!=='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
               Draft
             </el-button>
-            <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
+            <el-button v-if="row.status!=='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
               Delete
             </el-button>
           </template>
@@ -133,10 +134,10 @@
     </div>
     <pagination
       v-show="list_length>0"
-      :list_length="list_length"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
       @pagination="getList"
+      total="list_length"
     />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="500px">
@@ -167,7 +168,7 @@
         </el-form-item>
         -->
         <el-form-item label="Price" prop="dish_price">
-          <font style="font-size: large;padding-right: 5px">￥</font>
+          <span style="font-size: large;padding-right: 5px">￥</span>
           <el-input placeholder="00.00" style="width: 150px" v-model="temp.dish_price"></el-input>
         </el-form-item>
 
@@ -181,7 +182,7 @@
                       '#FF3D00']"
             :max="5"
             style="margin-top:8px;"
-            show-text="true"
+            show-text
           />
         </el-form-item>
       </el-form>
@@ -204,15 +205,16 @@
 </template>
 
 <script>
-import {fetchList, fetchDish, createDish, updateDish, deleteDish} from '@/api/dish'
+import { fetchList, fetchDish, createDish, updateDish, deleteDish } from '@/api/dish'
 import waves from '@/directive/waves' // waves directive
-import {parseTime} from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { parseTime } from '@/utils'
+import Pagination from '@/components/Pagination'
+import item from '@/layout/components/Sidebar/Item' // secondary package based on el-pagination
 
 const canteenOptions = [
-  {key: '合一', display_name: '合一'},
-  {key: '学二', display_name: '学二'},
-  {key: '新北', display_name: '新北'}
+  { key: '合一', display_name: '合一' },
+  { key: '学二', display_name: '学二' },
+  { key: '新北', display_name: '新北' }
 ]
 
 // arr to obj, such as { CN : "China", US : "USA" }
@@ -222,19 +224,22 @@ const canteenTypeKeyValue = canteenOptions.reduce((acc, cur) => {
   return acc
 }, {})
 
-const MoneyTest = /((^[1-9]\d*)|^0)(\.\d{0,2}){0,1}$/;
+const MoneyTest = /((^[1-9]\d*)|^0)(\.\d{0,2})?$/
 const validateMoney = (rule, value, callback) => {
   rule = MoneyTest
   if (rule.test(value)) {
-    callback();
+    callback()
   } else {
-    callback("price must be a number with two decimal places")
+    callback('price must be a number with two decimal places')
   }
+}
+const pageList = (list, page, limit) => {
+  return list.filter((item, index)=>index < limit * page && index >= limit * (page - 1))
 }
 export default {
   name: 'ComplexTable',
-  components: {Pagination},
-  directives: {waves},
+  components: { Pagination },
+  directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -246,12 +251,14 @@ export default {
     },
     canteenFilter(canteen_name) {
       return canteenTypeKeyValue[canteen_name]
-    }
+    },
+
   },
   data() {
     return {
       tableKey: 0,
       list: null,
+      list_items: [],
       list_length: 0,
       listLoading: true,
       listQuery: {
@@ -264,7 +271,7 @@ export default {
       },
       starOptions: [1, 2, 3, 4, 5],
       canteenOptions,
-      sortOptions: [{label: 'ID Ascending', key: '+id'}, {label: 'ID Descending', key: '-id'}],
+      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       showReviewer: false,
       temp: {
         dish_id: undefined,
@@ -284,11 +291,15 @@ export default {
       dialogPvVisible: false,
 
       rules: {
-        canteen_name: [{required: true, message: 'canteen is required', trigger: 'change'}],
-        timestamp: [{type: 'date', required: true, message: 'timestamp is required', trigger: 'change'}],
-        dish_price: [{validator:validateMoney, message: 'price must be a number with two decimal places',trigger: 'blur'},
-          {required: true, message: 'price is required', trigger: 'blur'}],
-        dish_name: [{required: true, message: 'dish_name is required', trigger: 'blur'}]
+        canteen_name: [{ required: true, message: 'canteen is required', trigger: 'change' }],
+        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
+        dish_price: [{
+          validator: validateMoney,
+          message: 'price must be a number with two decimal places',
+          trigger: 'blur'
+        },
+          { required: true, message: 'price is required', trigger: 'blur' }],
+        dish_name: [{ required: true, message: 'dish_name is required', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -300,9 +311,8 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        this.list = response.data.list_items
+        this.list = pageList(response.data.list_items, this.listQuery.page, this.listQuery.limit)
         this.list_length = response.data.list_length
-
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -321,7 +331,7 @@ export default {
       row.status = status
     },
     sortChange(data) {
-      const {prop, order} = data
+      const { prop, order } = data
       if (prop === 'dish_id') {
         this.sortByID(order)
       }
@@ -399,11 +409,11 @@ export default {
     },
     handleDelete(row, index) {
       this.temp = Object.assign({}, row)
-      let Did={
+      let Did = {
         dish_id: this.temp.dish_id
       }
-      deleteDish(Did).then(()=> {
-        this.list.splice(index, 1)
+      deleteDish(Did).then(() => {
+          this.list.splice(index, 1)
         }
       )
       this.$notify({
@@ -414,7 +424,7 @@ export default {
       })
     },
     handleUpdateComment(row) {
-      this.commentDialogStatus = true;
+      this.commentDialogStatus = true
     },
     handleDownload() {
       this.downloadLoading = true
@@ -433,13 +443,13 @@ export default {
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
         if (j === 'timestamp') {
-          return parseTime(v[j])
+          return parseTime(v[j], '')
         } else {
           return v[j]
         }
       }))
     },
-    getSortClass: function (key) {
+    getSortClass: function(key) {
       const sort = this.listQuery.sort_by_id
       return sort === `+${key}` ? 'ascending' : 'descending'
     }
