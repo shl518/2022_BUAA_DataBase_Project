@@ -1,7 +1,7 @@
 class DishController < ApplicationController
   # before_action :set_dish, only: %i[ show update destroy ]
 
-  @@id = 50
+  @@id = 1
   # POST /dish#create
   def create
     dish = Dish.new
@@ -68,11 +68,23 @@ class DishController < ApplicationController
     sort_by_id = params[:sort_by_id]
     dish_star = params[:dish_star]
     sql = "SELECT * FROM dishes "
+    flag = false
     if (dish_name && !dish_name.empty?) || (canteen_name && !canteen_name.empty?) || (dish_star && !dish_star.empty?)
       sql += "WHERE "
       sql += "name = '#{dish_name}' " if dish_name && !dish_name.empty?
-      sql += "canteen_name = '#{canteen_name}' " if canteen_name && !canteen_name.empty?
-      sql += "star = #{dish_star} " if dish_star && !dish_star.empty?
+      if dish_name && !dish_name.empty?
+        flag = true
+        sql += "name = '#{dish_name}' "
+      end
+      if canteen_name && !canteen_name.empty?
+        sql += " AND " if flag
+        flag = true
+        sql += "canteen_name = '#{canteen_name}' "
+      end
+      if dish_star && !dish_star.empty?
+        sql += " AND " if flag
+        sql += "star = #{dish_star} "
+      end
     end
 
     sql += "ORDER BY id ASC" if sort_by_id == '+id'
