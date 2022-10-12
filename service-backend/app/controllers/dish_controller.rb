@@ -69,7 +69,7 @@ class DishController < ApplicationController
       sql += "WHERE "
       sql += "dish_name = '#{dish_name}' " if dish_name
       sql += "canteen_name = '#{canteen_name}' " if canteen_name
-      sql += "dish_star = '#{dish_star}' " if dish_star
+      sql += "dish_star = #{dish_star} " if dish_star
     end
 
     sql += "ORDER BY id ASC" if sort_by_id == '+id'
