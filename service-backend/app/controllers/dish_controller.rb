@@ -142,8 +142,8 @@ class DishController < ApplicationController
 
     # 以下为sql语句进行修改操作
     begin
-      execute_statement("UPDATE dishes SET id=#{params[:dish_id]},name='#{params[:dish_name]}',
-      price='#{params[:dish_price]}',star=#{params[:dish_star]},canteen_name='#{params[:canteen_name]}' WHERE id=7;")
+      execute_statement("UPDATE dishes SET id=#{params[:dish_id]}, name='#{params[:dish_name]}',
+      price='#{params[:dish_price]}', star=#{params[:dish_star]}, canteen_name='#{params[:canteen_name]}' WHERE id=#{params[:dish_id]};")
 
       render status: 200, json: response_json(
         true,
