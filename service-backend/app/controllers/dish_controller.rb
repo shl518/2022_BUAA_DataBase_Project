@@ -71,7 +71,6 @@ class DishController < ApplicationController
     flag = false
     if (dish_name && !dish_name.empty?) || (canteen_name && !canteen_name.empty?) || (dish_star && !dish_star.empty?)
       sql += "WHERE "
-      sql += "name = '#{dish_name}' " if dish_name && !dish_name.empty?
       if dish_name && !dish_name.empty?
         flag = true
         sql += "name = '#{dish_name}' "
