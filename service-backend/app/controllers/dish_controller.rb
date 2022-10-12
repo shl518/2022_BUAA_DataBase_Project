@@ -30,7 +30,7 @@ class DishController < ApplicationController
     begin
       execute_statement("INSERT INTO dishes(id, name, price, star, created_at, updated_at)
       VALUES(#{@@id}, '#{dish[:name]}', #{dish[:price]} , '#{dish[:star]}','#{DateTime.parse(Time.now.to_s).strftime('%Y-%m-%d %H:%M:%S')}',
-       '#{DateTime.parse(Time.now.to_s).strftime('%Y-%m-%d %H:%M:%S')}'")
+       '#{DateTime.parse(Time.now.to_s).strftime('%Y-%m-%d %H:%M:%S')}');")
 
       render status: 200, json: response_json(
         true,
